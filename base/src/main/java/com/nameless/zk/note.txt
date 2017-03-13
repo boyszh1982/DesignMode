@@ -1,0 +1,9 @@
+如果断开连接,客户端watches将丢失这些节点的创建和删除变化。
+学习要点
+Connecting to ZooKeeper
+Read Operations
+Write Operations
+Handling Watches
+Miscelleaneous ZooKeeper Operations
+
+ZooKeeper 应用实力?下一节
