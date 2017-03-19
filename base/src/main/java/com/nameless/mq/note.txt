@@ -1,0 +1,33 @@
+RabbitMQ
+RabbitMQ 高可用
+RabbitMQ 如何确认消息已被Consume接受到？
+RabbitMQ P发送一条消息 hello 1 ,如果C不确认(ack),则消息技术不会变成 hello 0
+RabbitMQ P发出5条信息，启动5个C，那么5个C每人接收到1条信息，实验结果如此，是不是这样的？
+    channel.basicQos(1);//阻止rabbitmq将消息平均分配到每一个消费者，
+        会优先的发给不忙的消费者，如果当前的消费者在忙的话，就将消息分配给下一个消费者
+https://www.rabbitmq.com/api-guide.html
+
+RabbitMQ Confirm机制 ?
+
+Ø 启动服务
+rabbitmq-server start &
+Ø 停止服务
+rabbitmq-server stop &
+Ø 查看队列中的数据
+/usr/sbin/rabbitmqctl list_queues
+Ø 查看节点状态
+rabbitmqctl status
+Ø 查看分布式节点状态
+rabbitmqctl cluster_status
+Ø 停止应用
+rabbitmqctl stop_app
+Ø 启动应用
+rabbitmqctl start_app
+Ø 重设应用
+rabbitmqctl reset
+Ø 加入分布式节点
+rabbitmqctl cluster 节点标识
+Ø 具体参考:
+rabbitmqctl –help
+Ø 查看未确认消息：
+rabbitmqctl list_queues -p / name
