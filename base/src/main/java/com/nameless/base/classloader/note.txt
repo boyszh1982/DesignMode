@@ -1,0 +1,4 @@
+动态编译
+http://blog.onlycatch.com/post/30d1a37b6154
+
+动态编译只指定外部类名编译是不会编译内部类的
