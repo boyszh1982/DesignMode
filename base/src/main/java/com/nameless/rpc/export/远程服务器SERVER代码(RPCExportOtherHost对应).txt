@@ -1,0 +1,53 @@
+
+import java.rmi.AlreadyBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+import java.rmi.NotBoundException;
+import com.nameless.rpc.service.IShowService;
+
+public class RPCServer {
+
+	public static void main(String[] args) {
+		Registry registry;
+		try {
+			
+			IShowService iShow1 = (IShowService)UnicastRemoteObject.exportObject(new ShowServiceImpl(),8001);
+			IShowService iShow3 = (IShowService)UnicastRemoteObject.exportObject((IShowService)(message->{return "xxxxx";}),8003);
+			registry = LocateRegistry.createRegistry(9000);
+			registry.bind("show.port.1", iShow1 );
+			registry.bind("show.port.3", iShow3 );
+			
+			clientCall();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (AlreadyBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static void clientCall() throws RemoteException, NotBoundException {
+		Registry registry = LocateRegistry.getRegistry("192.168.128.141", 9000);
+		String[] lookups = registry.list();
+		for(String l : lookups){
+			System.out.println(l);
+		}
+		IShowService iShow = (IShowService)registry.lookup("show.port.1");
+		System.out.println(iShow.show("1111"));
+	}
+	
+	private static class ShowServiceImpl implements IShowService {
+		@Override
+		public String show(String message) throws RemoteException {
+			return message + " ....... ";
+		}
+	}
+}
+
