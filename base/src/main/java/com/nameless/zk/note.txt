@@ -7,3 +7,6 @@ Handling Watches
 Miscelleaneous ZooKeeper Operations
 
 ZooKeeper 应用实力?下一节 temp0000006 怎么用？
+
+
+zkCli.sh -server 127.0.0.1:2181
