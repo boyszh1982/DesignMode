@@ -16,6 +16,14 @@ import com.nameless.zk.distributed.lock.LockWatcher;
 import com.nameless.zk.distributed.lock.service.ISaleTicket;
 
 public class Client {
+	/**
+	 * 通过建立临时节点方法实现分布式锁，每次都需要重新连接ZooKeeper ,需要考虑用创建永久节点方法实现见
+	 * https://my.oschina.net/xianggao/blog/532010
+	 * 
+	 * 异步RMI如何实现，利用队列？
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 
 		//多线程模拟多客户端调用
@@ -52,7 +60,7 @@ class SaleThread implements Runnable {
 					if(ticket == 0){
 						break;
 					}
-					Thread.sleep(10);
+					//Thread.sleep(10);
 				} catch (KeeperException e) {
 					//没有抢到任务
 					//System.out.println(lockName + " 没有抢到任务 ！");
