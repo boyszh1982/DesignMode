@@ -9,6 +9,10 @@ import org.apache.zookeeper.data.Stat;
 
 public class CuratorTest {
 
+	/**
+	 * 怎么取ZK中同名节点最小的版本号节点。
+	 * @param args
+	 */
 	public static void main(String[] args) {
 
 		// 创建连接
