@@ -49,10 +49,11 @@ public class ForkJoinAsyncMode {
 						Thread.currentThread().getName(), start, mid, end, id);
 
 				// Fork off additional asynchronous task that is never joined.
+				
 				ForkJoinTask.adapt(() -> {
 					System.out.format("%s async task %d done%n", Thread.currentThread().getName(), id);
 				}).fork();
-
+				
 				invokeAll(new RecursiveRangeAction(start, mid), new RecursiveRangeAction(mid, end));
 			}
 		}
