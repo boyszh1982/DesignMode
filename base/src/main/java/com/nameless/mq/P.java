@@ -19,24 +19,37 @@ import com.rabbitmq.client.ReturnListener;
 public class P {
 
 	private final static String QUEUE_NAME = "hello";
-
+		
 	public static void main(String[] argv) throws Exception {
 		// 创建连接工厂
 		ConnectionFactory factory = new ConnectionFactory();
 		// 设置RabbitMQ地址
 		factory.setHost("192.168.128.141");
+		factory.setUsername("rabbitmq");
+		factory.setPassword("rabbitmq");
 		//factory.setPort(5672);
 		// 创建一个新的连接
 		Connection connection = factory.newConnection();
 		// 创建一个频道
 		Channel channel = connection.createChannel();
+		System.out.println(channel.getClass());
 		// 声明一个队列 --
 		/*
 		 * 在RabbitMQ中，队列声明是幂等性的（一个幂等操作的特点是其任意多次执行所产生的影响均与一次执行的影响相同），
 		 * 也就是说，如果不存在，就创建，如果存在，不会对已经存在的队列产生任何影响。
 		 */
 		boolean autoDelete = false ;
-		channel.queueDeclare(QUEUE_NAME, false, false, autoDelete, null);
+		/*
+		 * First, we need to make sure that RabbitMQ will never lose our queue. 
+		 * In order to do so, we need to declare it as durable:
+		 * 
+		 * At this point we're sure that the task_queue queue won't be lost even if RabbitMQ 
+		 * restarts. Now we need to mark our messages as persistent - by setting 
+		 * MessageProperties (which implements BasicProperties) 
+		 * to the value PERSISTENT_TEXT_PLAIN.
+		 */
+		boolean durable = true;
+		channel.queueDeclare(QUEUE_NAME, durable, false, autoDelete, null);
 		
 		/*
 		 * confirm 主要是用来判断消息是否有正确到达交换机，如果有，
@@ -72,15 +85,19 @@ public class P {
 			}
 		});
 		
-		String message = "%s Hello World! "+Math.random();
-		for(int i=0;i<15;i++){
+		StringBuffer message = new StringBuffer();
+		for(int i=0;i<100;i++){
+			message.append("%s#Hello World! "+Math.random());
 			// 发送消息到队列中
 			channel.basicPublish("", QUEUE_NAME, true ,
 					MessageProperties.PERSISTENT_TEXT_PLAIN,
-					String.format(message, i).getBytes("UTF-8"));
-			System.out.println("P [x] Sent '" + message + "'");
+					String.format(message.toString(), i).getBytes("UTF-8"));
+			//System.out.println("P [x] Sent '" + message + "'");
+			message.delete(0, message.length());
+			Thread.sleep(10*1000L);
 		}
 		
+		//Thread.sleep(100*1000L);
 		// 关闭频道和连接
 		channel.close();
 		connection.close();
