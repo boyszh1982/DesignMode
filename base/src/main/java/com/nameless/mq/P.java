@@ -54,7 +54,7 @@ public class P {
 		/*
 		 * confirm 主要是用来判断消息是否有正确到达交换机，如果有，
 		 * 那么就 ack 就返回 true；如果没有，则是 false。
-		 * 没有测试出效果
+		 * 没有测试出效果 , 需要设置confirm模式 channel.confirmSelect();
 		 */
 		channel.addConfirmListener(new ConfirmListener(){
 			public void handleAck(long deliveryTag, boolean multiple) throws IOException {
