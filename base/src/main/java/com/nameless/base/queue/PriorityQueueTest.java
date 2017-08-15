@@ -17,6 +17,13 @@ public class PriorityQueueTest {
 		//[-3, 0, 9, 6] 从小到大排列
 		System.out.println(pq);
 		
+		//从队列中取出,不删除
+		System.out.println(pq.peek());
+		//从队列中取出，删除。
+		System.out.println(pq.poll());
+		
+		System.out.println(pq);
+		
 		PriorityQueue<Integer> pq2 = new PriorityQueue<Integer>(new Comparator<Integer>(){
 			@Override
 			public int compare(Integer o1, Integer o2) {
