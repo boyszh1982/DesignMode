@@ -1,5 +1,7 @@
 package com.nameless.base.proxy.dynamic;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -88,6 +90,22 @@ class BeanFactory {
 			InvocationHandler handler = new BeanInvocationHandler(realObj);
 			Object proxyObj = Proxy.newProxyInstance(clazz.getClassLoader(), clazz.getInterfaces(), handler);
 			beanStoreMap.put(beanId, proxyObj);
+			
+			//产生类文件,可以反编译$Proxy0 的内部结构
+			byte[] b = sun.misc.ProxyGenerator.generateProxyClass("$Proxy0", new Class[]{clazz});
+			try (
+					java.io.FileOutputStream fout = new java.io.FileOutputStream("C:/temp/$Proxy0.class");
+			) {
+				fout.write(b);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//#产生类文件,可以反编译$Proxy0 的内部结构
+			
 			return proxyObj ;
 		}
 		return null;
