@@ -1,9 +1,16 @@
 package com.nameless.redis;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import redis.clients.jedis.Jedis;
 
@@ -11,13 +18,98 @@ public class RedisTest {
 
 	private static Jedis jedis = null;
 
-	public static void main(String[] args) {
-
-		jedis = new Jedis("127.0.0.1", 6379);
-
+	public static byte[] serialize(Object obj) throws Exception {
+		try (
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(bos);
+		) {
+			oos.writeObject(obj);
+			byte[] bytes = bos.toByteArray();
+			return bytes;
+		}
+		/*
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(bos);
+		oos.writeObject(obj);
+		byte[] bytes = bos.toByteArray();
+		oos.close();
+		bos.close();
+		*/
+	}
+	
+	/**  
+     * 对象转数组  
+     * @param obj  
+     * @return  
+     */  
+    public byte[] toByteArray (Object obj) {
+        byte[] bytes = null;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try {        
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeObject(obj);
+            oos.flush();
+            bytes = bos.toByteArray ();
+            oos.close();
+            bos.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }      
+        return bytes;    
+    }
+	
+	/**  
+     * 数组转对象  
+     * @param bytes  
+     * @return  
+     */  
+    public static Object toObject (byte[] bytes) {      
+        Object obj = null;      
+        try {        
+            ByteArrayInputStream bis = new ByteArrayInputStream (bytes);        
+            ObjectInputStream ois = new ObjectInputStream (bis);        
+            obj = ois.readObject();      
+            ois.close();   
+            bis.close();   
+        } catch (IOException ex) {        
+            ex.printStackTrace();   
+        } catch (ClassNotFoundException ex) {        
+            ex.printStackTrace();   
+        }      
+        return obj;    
+    }
+	
+	public static void main(String[] args) throws Exception {
+		long s = System.currentTimeMillis();
+		//jedis = new Jedis("127.0.0.1", 6379);
+		System.out.println(1);
+		jedis = new Jedis("124.126.15.61", 6379);
+		jedis.auth("123456");
+		
+		RedisInputDto dto = new RedisInputDto("ROOT","ROOT");
+		List<RedisInputDto> dtoList = new ArrayList<>();
+		dto.setDtos(dtoList);
+		
+		for(int i=0;i<1000000;i++) {
+			dtoList.add(new RedisInputDto("dto"+i,UUID.randomUUID().toString()) );
+		}
+		
+		//System.out.println(new String(serialize(dto)));
+		jedis.set("test01".getBytes(), serialize(dto) );
+		
+		byte[] by = jedis.get("test13".getBytes());
+		long e = System.currentTimeMillis();
+		System.out.println(e-s);
+		/*
+		RedisInputDto r = (RedisInputDto)toObject(by);
+		System.out.println(r.getName());
+		for(RedisInputDto d : r.getDtos() ) {
+			System.out.println(d.getName() + "," + d.getDesc());
+		}
+		*/
 		// jedis.auth("admin");
-		testString();
-		testMap();
+		// testString();
+		// testMap();
 
 	}
 
