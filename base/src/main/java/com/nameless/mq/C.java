@@ -24,7 +24,7 @@ public class C {
 		// 创建连接工厂
 		ConnectionFactory factory = new ConnectionFactory();
 		// 设置RabbitMQ地址
-		factory.setHost("192.168.128.141");
+		factory.setHost("10.1.12.209");
 		factory.setUsername("rabbitmq");
 		factory.setPassword("rabbitmq");
 		factory.setConnectionTimeout(5000*1000);
@@ -54,8 +54,10 @@ public class C {
 		channel.queueDeclare(QUEUE_NAME, durable, false, autoDelete, null);
 		System.out.println(CONSUMER_NAME+" [*] Waiting for messages. To exit press CTRL+C");
 
-		// what's this
-		channel.basicQos(1);
+		// what's this 接受消息的数量。举例：当前接受到1条消息，没做ACK或NACK，则不再接受其他消息。
+		// 不做ACK或NACK，永远会取到队列第一条数据。多个消费者会按顺序获取，不会取重复记录。
+		// 当所有消费者重启后，再次按原有顺序分配消息。
+		channel.basicQos(5);
 		
 		/*
 		 * DefaultConsumer类实现了Consumer接口，通过传入一个频道，
@@ -91,16 +93,16 @@ public class C {
 				//看看消息失败时是否转移到其他consumer上了。
 				SimpleDateFormat sdf = new SimpleDateFormat("ss");
 				String ss = sdf.format(new java.util.Date());
-				//30秒以上时Ack
-				if(Integer.valueOf(ss) > 30 ) {
+				//30秒以上时Ack 即不ACK 也不 NACK 没关系，当挂掉的时候会有其他消费者执行，
+				//不过任务要不挂掉，消息就永远不会被处理了。
+				if(Integer.valueOf(ss) > 100 ) {
 					channel.basicAck(deliveryTag, false);
 				}
 				else{
 					//Nack并且重新入队列。
-					channel.basicNack(deliveryTag, false, false);
-					
-					
+					channel.basicNack(deliveryTag, false, true);
 				}
+
 				//System.out.println(channel.getClass());
 				// ???? 
 				//channel.basicCancel(consumerTag);

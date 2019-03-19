@@ -21,20 +21,20 @@ public class RabbitmqTest {
 	public static void main(String[] args) throws IOException, TimeoutException {
 
 		RabbitmqTest t = new RabbitmqTest();
-		/*
+
 		for (int i = 0; i < 100000; i++) {
 			t.sand();
 		}
 		
-*/		t.recv();
+		//t.recv();
 		
 	}
 
 	public void sand() throws IOException, TimeoutException {
 		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost("192.168.128.141");
-		factory.setUsername("rabbitmq");
-		factory.setPassword("rabbitmq");
+		factory.setHost("10.2.36.189");
+		factory.setUsername("guest");
+		factory.setPassword("guest");
 		Connection connection = factory.newConnection();
 		Channel channel = connection.createChannel();
 

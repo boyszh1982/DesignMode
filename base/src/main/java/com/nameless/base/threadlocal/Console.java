@@ -11,6 +11,14 @@ public class Console {
 
     public static void main(String[] args) throws InterruptedException {
 
+        /**
+         * java -ea  //enable assert
+         */
+        boolean flag = false;
+        assert flag == true;
+
+        boolean flag2 = 1>2;
+        assert flag2;
 
         List<Thread> threads = new ArrayList<>();
         for(int i=0;i<20;i++){

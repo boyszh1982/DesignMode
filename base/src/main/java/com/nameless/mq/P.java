@@ -24,7 +24,7 @@ public class P {
 		// 创建连接工厂
 		ConnectionFactory factory = new ConnectionFactory();
 		// 设置RabbitMQ地址
-		factory.setHost("192.168.128.141");
+		factory.setHost("10.1.12.209");
 		factory.setUsername("rabbitmq");
 		factory.setPassword("rabbitmq");
 		//factory.setPort(5672);
@@ -32,6 +32,7 @@ public class P {
 		Connection connection = factory.newConnection();
 		// 创建一个频道
 		Channel channel = connection.createChannel();
+		channel.confirmSelect();
 		System.out.println(channel.getClass());
 		// 声明一个队列 --
 		/*
@@ -55,6 +56,8 @@ public class P {
 		 * confirm 主要是用来判断消息是否有正确到达交换机，如果有，
 		 * 那么就 ack 就返回 true；如果没有，则是 false。
 		 * 没有测试出效果 , 需要设置confirm模式 channel.confirmSelect();
+		 *
+		 * 是否正确到达了MqServer
 		 */
 		channel.addConfirmListener(new ConfirmListener(){
 			public void handleAck(long deliveryTag, boolean multiple) throws IOException {
@@ -94,7 +97,7 @@ public class P {
 					String.format(message.toString(), i).getBytes("UTF-8"));
 			//System.out.println("P [x] Sent '" + message + "'");
 			message.delete(0, message.length());
-			Thread.sleep(10*1000L);
+			Thread.sleep(1*1000L);
 		}
 		
 		//Thread.sleep(100*1000L);
